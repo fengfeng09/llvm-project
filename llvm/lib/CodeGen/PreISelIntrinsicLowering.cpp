@@ -302,7 +302,8 @@ bool PreISelIntrinsicLowering::expandMemIntrinsicUses(Function &F) const {
       auto *Memcpy = cast<MemCpyInst>(Inst);
       Function *ParentFunc = Memcpy->getFunction();
       const TargetTransformInfo &TTI = LookupTTI(*ParentFunc);
-      if (shouldExpandMemIntrinsicWithSize(Memcpy->getLength(), TTI)) {
+      if (TTI.isProfitableToExpand(Inst) &&
+          shouldExpandMemIntrinsicWithSize(Memcpy->getLength(), TTI)) {
         if (UseMemIntrinsicLibFunc &&
             canEmitLibcall(TM, ParentFunc, RTLIB::MEMCPY))
           break;

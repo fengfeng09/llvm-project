@@ -94,6 +94,8 @@ public:
     return 64;
   }
 
+  bool isProfitableToExpand(Instruction *Inst) const { return true; }
+
   // Although this default value is arbitrary, it is not random. It is assumed
   // that a condition that evaluates the same way by a higher percentage than
   // this is best represented as control flow. Therefore, the default value N

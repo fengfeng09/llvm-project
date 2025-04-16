@@ -1232,6 +1232,10 @@ uint64_t TargetTransformInfo::getMaxMemIntrinsicInlineSizeThreshold() const {
   return TTIImpl->getMaxMemIntrinsicInlineSizeThreshold();
 }
 
+bool TargetTransformInfo::isProfitableToExpand(Instruction *Inst) const {
+  return TTIImpl->isProfitableToExpand(Inst);
+}
+
 InstructionCost TargetTransformInfo::getArithmeticReductionCost(
     unsigned Opcode, VectorType *Ty, std::optional<FastMathFlags> FMF,
     TTI::TargetCostKind CostKind) const {

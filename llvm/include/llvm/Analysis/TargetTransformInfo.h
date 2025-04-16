@@ -391,6 +391,9 @@ public:
   /// profitable to inline the call.
   uint64_t getMaxMemIntrinsicInlineSizeThreshold() const;
 
+  /// Check if the Inst is profitable to expand.
+  bool isProfitableToExpand(Instruction *Inst) const;
+
   /// \return The estimated number of case clusters when lowering \p 'SI'.
   /// \p JTSize Set a jump table size only when \p SI is suitable for a jump
   /// table.
@@ -1949,6 +1952,7 @@ public:
                                        const AllocaInst *AI) const = 0;
   virtual InstructionCost getMemcpyCost(const Instruction *I) = 0;
   virtual uint64_t getMaxMemIntrinsicInlineSizeThreshold() const = 0;
+  virtual bool isProfitableToExpand(Instruction *Inst) const = 0;
   virtual unsigned
   getEstimatedNumberOfCaseClusters(const SwitchInst &SI, unsigned &JTSize,
                                    ProfileSummaryInfo *PSI,
@@ -2418,6 +2422,10 @@ public:
 
   uint64_t getMaxMemIntrinsicInlineSizeThreshold() const override {
     return Impl.getMaxMemIntrinsicInlineSizeThreshold();
+  }
+
+  bool isProfitableToExpand(Instruction *Inst) const override {
+    return Impl.isProfitableToExpand(Inst);
   }
 
   InstructionCost getInstructionCost(const User *U,

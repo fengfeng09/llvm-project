@@ -58,6 +58,7 @@ public:
                              TTI::PeelingPreferences &PP);
 
   int64_t getMaxMemIntrinsicInlineSizeThreshold() const;
+  bool isProfitableToExpand(Instruction *Inst) const;
 };
 
 class GCNTTIImpl final : public BasicTTIImplBase<GCNTTIImpl> {
@@ -138,6 +139,7 @@ public:
                                     unsigned AddrSpace) const;
 
   int64_t getMaxMemIntrinsicInlineSizeThreshold() const;
+  bool isProfitableToExpand(Instruction *Inst) const;
   Type *
   getMemcpyLoopLoweringType(LLVMContext &Context, Value *Length,
                             unsigned SrcAddrSpace, unsigned DestAddrSpace,

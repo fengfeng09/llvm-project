@@ -278,6 +278,16 @@ int64_t AMDGPUTTIImpl::getMaxMemIntrinsicInlineSizeThreshold() const {
   return 1024;
 }
 
+bool AMDGPUTTIImpl::isProfitableToExpand(Instruction *Inst) const {
+  if (auto *Memcpy = dyn_cast<MemCpyInst>(Inst)) {
+    // Never expand 'llvm.memcpy.p5.p4.i64' on AMDGPU because it will break
+    // SROA.
+    return Memcpy->getDestAddressSpace() != AMDGPUAS::PRIVATE_ADDRESS ||
+           Memcpy->getSourceAddressSpace() != AMDGPUAS::CONSTANT_ADDRESS;
+  }
+  return true;
+}
+
 const FeatureBitset GCNTTIImpl::InlineFeatureIgnoreList = {
     // Codegen control options which don't matter.
     AMDGPU::FeatureEnableLoadStoreOpt, AMDGPU::FeatureEnableSIScheduler,
@@ -414,6 +424,16 @@ bool GCNTTIImpl::isLegalToVectorizeStoreChain(unsigned ChainSizeInBytes,
 
 int64_t GCNTTIImpl::getMaxMemIntrinsicInlineSizeThreshold() const {
   return 1024;
+}
+
+bool GCNTTIImpl::isProfitableToExpand(Instruction *Inst) const {
+  if (auto *Memcpy = dyn_cast<MemCpyInst>(Inst)) {
+    // Never expand 'llvm.memcpy.p5.p4.i64' on AMDGPU because it will break
+    // SROA.
+    return Memcpy->getDestAddressSpace() != AMDGPUAS::PRIVATE_ADDRESS ||
+           Memcpy->getSourceAddressSpace() != AMDGPUAS::CONSTANT_ADDRESS;
+  }
+  return true;
 }
 
 Type *GCNTTIImpl::getMemcpyLoopLoweringType(
